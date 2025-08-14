@@ -1,7 +1,5 @@
-// frontend/src/App.tsx
+// src/App.tsx
 
-// Hooks do React que usei: useState para gerenciar o estado, useEffect para efeitos colaterais
-// como a busca de dados, e useMemo para otimizar a performance da filtragem.
 import { useState, useEffect, useMemo } from 'react';
 import { getServices, ServiceOrder } from '@/api/services';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,13 +8,9 @@ import { AddServiceDialog } from './components/AddServiceDialog';
 import { Input } from "@/components/ui/input";
 
 function App() {
-  // Estado para armazenar a lista completa de serviços vinda da API.
   const [services, setServices] = useState<ServiceOrder[]>([]);
-  // Estado para controlar o texto digitado no campo de busca.
   const [searchTerm, setSearchTerm] = useState('');
 
-  // A lógica de busca de dados foi encapsulada nesta função para poder ser reutilizada.
-  // Isso é útil para atualizar a tabela após adicionar, editar ou excluir um serviço.
   const fetchServices = async () => {
     try {
       const data = await getServices();
@@ -26,14 +20,23 @@ function App() {
     }
   };
 
-  // O useEffect com array de dependências vazio [] é um padrão do React para executar
-  // uma ação apenas uma vez, quando o componente é montado na tela. Perfeito para a busca inicial de dados.
   useEffect(() => {
     fetchServices();
   }, []);
 
-  // Achei importante usar 'useMemo' para a filtragem. Isso otimiza a performance,
-  // pois o React só vai refazer o filtro se a lista de 'services' ou o 'searchTerm' mudarem.
+  // NOVO: Bloco de cálculo para as métricas do Dashboard
+  // Ele observa a lista 'services' e recalcula tudo automaticamente quando ela muda.
+  const dashboardMetrics = useMemo(() => {
+    const totalRevenue = services
+      .filter(service => service.status === 'Concluído')
+      .reduce((sum, service) => sum + service.price, 0);
+
+    const pendingServices = services.filter(s => s.status === 'Pendente').length;
+    const inProgressServices = services.filter(s => s.status === 'Em Andamento').length;
+
+    return { totalRevenue, pendingServices, inProgressServices };
+  }, [services]);
+
   const filteredServices = useMemo(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     if (!lowercasedFilter) {
@@ -46,11 +49,6 @@ function App() {
     );
   }, [services, searchTerm]);
 
-  // Os dados do dashboard ainda são estáticos, um ponto para melhoria futura.
-  const totalRevenue = 0;
-  const pendingServices = 0;
-  const inProgressServices = 0;
-
   return (
     <div className="container mx-auto p-4 md:p-8">
       <header className="mb-8">
@@ -59,34 +57,41 @@ function App() {
       </header>
 
       <main className="grid gap-4 md:grid-cols-3">
-        {/* Cards do Dashboard... */}
+        {/* Card de Faturamento */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Faturamento (Concluído)</CardTitle>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="h-4 w-4 text-muted-foreground"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {totalRevenue.toFixed(2)}</div>
+            {/* ATUALIZADO */}
+            <div className="text-2xl font-bold">{dashboardMetrics.totalRevenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
             <p className="text-xs text-muted-foreground">Total de serviços finalizados</p>
           </CardContent>
         </Card>
+
+        {/* Card de Serviços Pendentes */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Serviços Pendentes</CardTitle>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground"><path d="M12 8v4l3 3" /><circle cx="12" cy="12" r="10" /></svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{pendingServices}</div>
+            {/* ATUALIZADO */}
+            <div className="text-2xl font-bold">+{dashboardMetrics.pendingServices}</div>
              <p className="text-xs text-muted-foreground">Aguardando início dos trabalhos</p>
           </CardContent>
         </Card>
+
+        {/* Card de Serviços Em Andamento */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Em Andamento</CardTitle>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-muted-foreground"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{inProgressServices}</div>
+            {/* ATUALIZADO */}
+            <div className="text-2xl font-bold">+{dashboardMetrics.inProgressServices}</div>
              <p className="text-xs text-muted-foreground">Serviços atualmente na oficina</p>
           </CardContent>
         </Card>
@@ -102,12 +107,9 @@ function App() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {/* Passo a função fetchServices como prop para o modal de adição.
-                Isso permite que o modal "avise" o App para atualizar a lista após a criação. */}
             <AddServiceDialog onServiceAdded={fetchServices} />
           </div>
         </div>
-        {/* A tabela recebe a lista já filtrada e as funções de atualização. */}
         <ServiceTable
           services={filteredServices}
           onServiceDeleted={fetchServices}
