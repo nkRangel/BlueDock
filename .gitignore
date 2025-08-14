@@ -1,0 +1,23 @@
+# Arquivos de log e dependências do Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Arquivos de build e de ambiente
+dist/
+.env
+.env.local
+
+# Banco de dados SQLite
+# Não quero subir o arquivo do banco de dados para o repositório.
+*.db
+*.db-journal
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de cache e logs de editores
+.vscode/
+.idea/
+*.log

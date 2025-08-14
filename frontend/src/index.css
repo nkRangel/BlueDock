@@ -1,0 +1,70 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    /* Este é o tema claro (light mode), podemos configurar depois */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    /* Este é o nosso TEMA BLUE DOCK! */
+    --background: 195 96% 13%;      /* #013340 */
+    --foreground: 220 8% 90%;        /* #E2E4DF */
+    
+    --card: 40 3% 11%;               /* #1D1D1B */
+    --card-foreground: 220 8% 90%;   /* #E2E4DF */
+    
+    --popover: 40 3% 11%;            /* #1D1D1B */
+    --popover-foreground: 220 8% 90%;/* #E2E4DF */
+    
+    --primary: 30 49% 39%;           /* #956335 */
+    --primary-foreground: 0 0% 100%;  /* #FFFFFF */
+    
+    --secondary: 50 32% 55%;         /* #B6A462 */
+    --secondary-foreground: 195 96% 13%; /* #013340 */
+    
+    --muted: 30 49% 39%;             /* #956335 */
+    --muted-foreground: 50 32% 55%;  /* #B6A462 */
+    
+    --accent: 50 32% 55%;            /* #B6A462 */
+    --accent-foreground: 195 96% 13%;/* #013340 */
+    
+    --destructive: 0 63% 31%;        /* Cor de perigo/exclusão */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 49% 39%;            /* #956335 */
+    --input: 30 49% 39%;             /* #956335 */
+    --ring: 50 32% 55%;              /* #B6A462 */
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
