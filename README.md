@@ -56,7 +56,6 @@ Desenvolvido por **Pedro Rangel**, o BlueDock é uma aplicação web Full-Stack 
 
 ## Próximos Passos e Melhorias Futuras
 
-- Implementar a lógica para que os cards do Dashboard reflitam os dados reais da tabela.
 - Adicionar um sistema de notificações "Toast" para um feedback mais elegante das ações do usuário.
 - Implementar paginação na tabela para otimizar a performance com um grande volume de dados.
 

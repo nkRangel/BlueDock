@@ -1,80 +1,123 @@
-// src/components/AddServiceDialog.tsx
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addService } from '@/api/services';
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { addService, getCategories, Category } from '@/api/services';
+import { toast } from "sonner";
 
-// Nosso componente vai receber uma função para ser chamada quando um serviço for adicionado.
-interface AddServiceDialogProps {
-  onServiceAdded: () => void;
-}
+interface AddServiceDialogProps { onServiceAdded: () => void; }
 
 export function AddServiceDialog({ onServiceAdded }: AddServiceDialogProps) {
   const [open, setOpen] = useState(false);
-  // Criamos um estado para cada campo do formulário.
+  // Estados para todos os campos do formulário
   const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [itemDescription, setItemDescription] = useState('');
+  const [serviceDetails, setServiceDetails] = useState('');
   const [price, setPrice] = useState('');
+  const [categoryId, setCategoryId] = useState(''); // Estado para o ID da categoria selecionada
+  const [categories, setCategories] = useState<Category[]>([]); // Estado para a lista de categorias
+
+  // Usei o useEffect para buscar a lista de categorias assim que o modal for aberto.
+  useEffect(() => {
+    if (open) {
+      const fetchCategories = async () => {
+        try {
+          const data = await getCategories();
+          setCategories(data);
+        } catch (error) {
+          toast.error("Falha ao carregar as categorias.");
+        }
+      };
+      fetchCategories();
+    }
+  }, [open]); // A dependência [open] garante que isso rode toda vez que o modal abrir.
 
   const handleSubmit = async () => {
-    // Validação simples
     if (!customerName || !itemDescription || !price) {
-      alert('Por favor, preencha todos os campos.');
+      toast.error('Nome do cliente, descrição e preço são obrigatórios.');
       return;
     }
     try {
-      // Chamamos nossa função da API para adicionar o serviço
       await addService({
         customer_name: customerName,
+        customer_phone: customerPhone,
+        customer_address: customerAddress,
+        customer_email: customerEmail,
         item_description: itemDescription,
+        service_details: serviceDetails,
         price: parseFloat(price),
+        category_id: categoryId ? parseInt(categoryId) : null, // Envio o ID da categoria
       });
-      // Se deu tudo certo, limpamos os campos, fechamos o modal e avisamos o App.tsx
-      setCustomerName('');
-      setItemDescription('');
-      setPrice('');
+      toast.success('Serviço adicionado com sucesso!');
       setOpen(false);
-      onServiceAdded(); // ESSA É A LINHA QUE "AVISA" PARA ATUALIZAR A TABELA!
+      onServiceAdded();
     } catch (error) {
-      console.error("Erro ao adicionar serviço:", error);
-      alert("Não foi possível adicionar o serviço. Tente novamente.");
+      toast.error("Não foi possível adicionar o serviço.");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Adicionar Novo Serviço</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild><Button>Adicionar Novo Serviço</Button></DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Adicionar Nova Ordem de Serviço</DialogTitle>
-          <DialogDescription>
-            Preencha os dados do novo serviço. O status inicial será "Pendente".
-          </DialogDescription>
-        </DialogHeader>
+        <DialogHeader><DialogTitle>Adicionar Nova Ordem de Serviço</DialogTitle></DialogHeader>
         <div className="grid gap-4 py-4">
+          {/* ... campos de cliente ... */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="customerName" className="text-right">Cliente</Label>
             <Input id="customerName" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="customerPhone" className="text-right">Telefone</Label>
+            <Input id="customerPhone" type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="col-span-3" />
+          </div>
+           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="customerEmail" className="text-right">E-mail</Label>
+            <Input id="customerEmail" type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="customerAddress" className="text-right">Endereço</Label>
+            <Input id="customerAddress" value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} className="col-span-3" />
+          </div>
+          
+          {/* --- NOVO CAMPO DE CATEGORIA --- */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="category" className="text-right">Categoria</Label>
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Selecione uma categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.id.toString()}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* ... campos de serviço ... */}
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="itemDescription" className="text-right">Item/Serviço</Label>
             <Input id="itemDescription" value={itemDescription} onChange={(e) => setItemDescription(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="serviceDetails" className="text-right pt-2">Detalhes</Label>
+            <Textarea id="serviceDetails" value={serviceDetails} onChange={(e) => setServiceDetails(e.target.value)} className="col-span-3" placeholder="Detalhes completos do serviço..." />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="price" className="text-right">Preço (R$)</Label>
             <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="col-span-3" />
           </div>
         </div>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>Salvar Serviço</Button>
-        </DialogFooter>
+        <DialogFooter><Button type="submit" onClick={handleSubmit}>Salvar Serviço</Button></DialogFooter>
       </DialogContent>
     </Dialog>
   );

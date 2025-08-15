@@ -1,32 +1,48 @@
-// frontend/src/api/services.ts
-
-// Centralizei a URL da API aqui. Se um dia ela mudar, só preciso alterar neste local.
 const API_URL = 'http://localhost:3001/api';
 
-// A interface ServiceOrder funciona como um "contrato" de dados entre o front e o back.
-// O TypeScript me ajuda a garantir que os dados estejam sempre no formato esperado.
+// Criei uma interface para o formato de uma Categoria.
+export interface Category {
+    id: number;
+    name: string;
+}
+
+// Atualizei a ServiceOrder para incluir os novos campos.
+// Usei `?` e `| null` para indicar que um serviço pode não ter uma categoria associada.
 export interface ServiceOrder {
     id: number;
     receipt_number: string;
     customer_name: string;
+    customer_phone?: string;
+    customer_address?: string;
+    customer_email?: string;
     item_description: string;
+    service_details?: string;
     price: number;
     status: 'Pendente' | 'Em Andamento' | 'Concluído' | 'Cancelado';
     created_at: string;
+    category_id: number | null;
+    category_name: string | null;
 }
 
-// Usei async/await com fetch, que é a forma moderna de lidar com requisições assíncronas em JS.
-export const getServices = async (): Promise<ServiceOrder[]> => {
-    const response = await fetch(`${API_URL}/services`);
-    if (!response.ok) {
-        throw new Error('Falha ao buscar os serviços da API.');
-    }
+export interface PaginatedServicesResponse { data: ServiceOrder[]; meta: { total: number; page: number; limit: number; totalPages: number; } }
+
+// Esta é a nova função para buscar a lista de categorias.
+// Ela vai popular nossos dropdowns.
+export const getCategories = async (): Promise<Category[]> => {
+    const response = await fetch(`${API_URL}/categories`);
+    if (!response.ok) { throw new Error('Falha ao buscar as categorias.'); }
     const result = await response.json();
     return result.data;
 };
 
-// Um DTO (Data Transfer Object) para a criação, omitindo campos que são gerados pelo backend.
-type CreateServiceDTO = Omit<ServiceOrder, 'id' | 'status' | 'created_at' | 'receipt_number'>;
+export const getServices = async (page = 1, limit = 10): Promise<PaginatedServicesResponse> => {
+    const response = await fetch(`${API_URL}/services?page=${page}&limit=${limit}`);
+    if (!response.ok) { throw new Error('Falha ao buscar os serviços da API.'); }
+    const result = await response.json();
+    return result;
+};
+
+type CreateServiceDTO = Omit<ServiceOrder, 'id' | 'status' | 'created_at' | 'receipt_number' | 'category_name'>;
 
 export const addService = async (service: CreateServiceDTO): Promise<ServiceOrder> => {
   const response = await fetch(`${API_URL}/services`, {
@@ -39,8 +55,7 @@ export const addService = async (service: CreateServiceDTO): Promise<ServiceOrde
   return result.data;
 };
 
-// O Partial<ServiceOrder> no update é útil para enviar apenas os campos que foram alterados.
-export const updateService = async (id: number, serviceData: Partial<ServiceOrder>): Promise<void> => {
+export const updateService = async (id: number, serviceData: Partial<CreateServiceDTO>): Promise<void> => {
   await fetch(`${API_URL}/services/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
