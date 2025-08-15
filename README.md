@@ -1,27 +1,41 @@
 # BlueDock - Gerenciador de Ordens de Serviço
 
-Desenvolvido por **Pedro Rangel**, o BlueDock é uma aplicação web Full-Stack criada como um sistema de gerenciamento de serviços (Ordens de Serviço) para uma casa de pesca, caça e camping. O projeto demonstra uma arquitetura moderna com uma clara separação entre o servidor (back-end) e a interface do cliente (front-end).
+Desenvolvido por **Pedro Rangel**, o BlueDock é uma aplicação web Full-Stack completa, criada como um sistema de gerenciamento de serviços (Ordens de Serviço) para uma oficina ou pequena empresa, como uma casa de pesca, caça e camping. O projeto demonstra uma arquitetura moderna com uma clara separação entre o servidor (back-end) e a interface do cliente (front-end), implementando funcionalidades avançadas para uma experiência de usuário robusta e profissional.
 
 ## Funcionalidades Implementadas
 
-- **Dashboard Principal:** Interface com visão geral de métricas importantes da oficina.
+- **Dashboard Dinâmico:** A tela inicial apresenta uma visão geral com métricas importantes, como faturamento total (de serviços concluídos), número de serviços pendentes e em andamento. Os valores são calculados em tempo real a partir dos dados da aplicação.
+
 - **CRUD Completo de Serviços:**
-  - **Create:** Adicionar novos serviços através de um formulário em modal.
-  - **Read:** Listar todos os serviços em uma tabela organizada e de fácil visualização.
-  - **Update:** Editar informações de serviços existentes, incluindo a mudança de status.
-  - **Delete:** Remover serviços do banco de dados com uma etapa de confirmação.
-- **Busca em Tempo Real:** Filtragem instantânea da tabela de serviços por nome do cliente, descrição do item ou número do canhoto.
-- **Geração de Canhoto Único:** Cada novo serviço recebe um número de ordem de serviço único e sequencial, gerado e garantido pelo backend.
-- **Tema Personalizado:** Interface estilizada com uma paleta de cores customizada para criar uma identidade visual única e profissional.
+  - **Create:** Adicionar novos serviços através de um formulário completo em modal, incluindo dados detalhados do cliente e do serviço.
+  - **Read:** Listar todos os serviços em uma tabela organizada, limpa e de fácil visualização.
+  - **Update:** Editar informações de serviços existentes através de um modal, permitindo a alteração de todos os campos, incluindo o status do serviço.
+  - **Delete:** Remover serviços do banco de dados com uma etapa de confirmação para garantir a segurança dos dados.
+
+- **Sistema de Categorias:** Os serviços podem ser classificados em categorias (ex: Molinetes, Carabinas), implementadas através de um modelo de banco de dados relacional (tabelas `services` e `categories`) para garantir a integridade e consistência dos dados.
+
+- **Busca e Filtragem em Tempo Real:** Um campo de busca permite a filtragem instantânea da tabela de serviços por nome do cliente, descrição do item, número do canhoto ou categoria.
+
+- **Paginação:** A tabela de serviços é paginada para garantir a performance e escalabilidade da aplicação, mesmo com um grande volume de dados. O backend envia os dados em "fatias", e o frontend renderiza os controles de navegação.
+
+- **Geração de Canhoto Único:** Cada novo serviço recebe um número de ordem de serviço único (ex: `2025-123456`), gerado e garantido pelo backend no momento da criação, facilitando o rastreamento.
+
+- **Notificações Inteligentes (Toasts):** A aplicação fornece feedback visual para as ações do usuário (criar, editar, excluir) através de notificações "toast" não-bloqueantes, melhorando a experiência do usuário.
+
+- **Integração com WhatsApp:** Funcionalidade para notificar o cliente sobre o status de sua ordem de serviço, gerando uma mensagem pré-formatada e abrindo o WhatsApp para envio com um único clique.
+
+- **Design e Tema:** A interface foi construída com uma paleta de cores personalizada e um tema escuro consistente, garantindo uma identidade visual única e profissional.
 
 ## Tecnologias Utilizadas
 
 - **Frontend:**
-  - React
+  - React (com Hooks: `useState`, `useEffect`, `useMemo`)
   - Vite
   - TypeScript
   - Tailwind CSS
-  - Shadcn/UI
+  - Shadcn/UI (para componentes: Tabela, Cards, Modais, etc.)
+  - Sonner (para notificações Toast)
+  - React Icons
 
 - **Backend:**
   - Node.js
@@ -53,11 +67,6 @@ Desenvolvido por **Pedro Rangel**, o BlueDock é uma aplicação web Full-Stack 
     npm run dev
     ```
     A aplicação estará acessível em `http://localhost:5173`.
-
-## Próximos Passos e Melhorias Futuras
-
-- Adicionar um sistema de notificações "Toast" para um feedback mais elegante das ações do usuário.
-- Implementar paginação na tabela para otimizar a performance com um grande volume de dados.
 
 ---
 *Este projeto foi desenvolvido como parte do meu portfólio pessoal.*
