@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    /* --- PALETA CASA DAS REDES DO ALENCAR (MODO ESCURO NATIVO) --- */
+    
+    /* Fundo: Azul Petróleo Profundo #013340 */
+    --background: 192 98% 13%;
+    /* Texto: Off-White #E2E4DF */
+    --foreground: 80 8% 88%;
+
+    /* Cards: Cinza Escuro #1D1D1B com leve transparência */
+    --card: 60 3% 11%;
+    --card-foreground: 80 8% 88%;
+ 
+    --popover: 192 98% 13%;
+    --popover-foreground: 80 8% 88%;
+ 
+    /* Primária: Bronze #956335 */
+    --primary: 30 48% 46%;
+    --primary-foreground: 0 0% 100%;
+ 
+    /* Secundária: Dourado #B6A462 */
+    --secondary: 47 33% 55%;
+    --secondary-foreground: 192 98% 13%;
+ 
+    --muted: 192 50% 20%;
+    --muted-foreground: 47 33% 65%; /* Dourado mais claro para texto de apoio */
+ 
+    --accent: 47 33% 55%;
+    --accent-foreground: 192 98% 13%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 48% 46%;
+    --input: 192 40% 20%;
+    --ring: 47 33% 55%;
+ 
+    --radius: 0.75rem; /* Bordas um pouco mais arredondadas */
+  }
+ 
+  .dark {
+    /* Mesmas variáveis, garantindo consistência */
+    --background: 192 98% 13%;
+    --foreground: 80 8% 88%;
+    --card: 60 3% 11%;
+    --card-foreground: 80 8% 88%;
+    --popover: 192 98% 13%;
+    --popover-foreground: 80 8% 88%;
+    --primary: 30 48% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 47 33% 55%;
+    --secondary-foreground: 192 98% 13%;
+    --muted: 192 50% 20%;
+    --muted-foreground: 47 33% 65%;
+    --accent: 47 33% 55%;
+    --accent-foreground: 192 98% 13%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 48% 46%;
+    --input: 192 40% 20%;
+    --ring: 47 33% 55%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Adiciona um degradê sutil no fundo para dar profundidade */
+    background-image: radial-gradient(circle at top center, hsl(192, 98%, 18%), hsl(192, 98%, 13%));
+    min-height: 100vh;
+  }
+}
