@@ -1,7 +1,4 @@
-
-
-import { useState, useEffect, ReactNode } from 'react'; 
-
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,15 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ServiceOrder, updateService, getCategories, Category } from '@/api/services';
 import { toast } from "sonner";
 
-
-interface EditServiceDialogProps { 
-    service: ServiceOrder; 
-    onServiceUpdated: () => void;
-    trigger?: ReactNode; 
-}
+interface EditServiceDialogProps { service: ServiceOrder; onServiceUpdated: () => void; trigger?: React.ReactNode; }
 
 export function EditServiceDialog({ service, onServiceUpdated, trigger }: EditServiceDialogProps) {
-  
   const [open, setOpen] = useState(false);
   const [customerName, setCustomerName] = useState(service.customer_name);
   const [customerPhone, setCustomerPhone] = useState(service.customer_phone || '');
@@ -74,10 +65,8 @@ export function EditServiceDialog({ service, onServiceUpdated, trigger }: EditSe
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* Se passarmos um trigger customizado (o ícone), usa ele. Se não, usa o botão padrão */}
         {trigger ? trigger : <Button variant="outline" size="sm">Editar</Button>}
       </DialogTrigger>
-      {/* ... (CONTEÚDO DO DIALOGCONTENT IGUAL AO ANTERIOR) ... */}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Editar OS #{service.receipt_number}</DialogTitle>
@@ -126,11 +115,12 @@ export function EditServiceDialog({ service, onServiceUpdated, trigger }: EditSe
             <Select value={status} onValueChange={(value) => setStatus(value as ServiceOrder['status'])}>
               <SelectTrigger className="col-span-3"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Orçamento Enviado">Orçamento Enviado</SelectItem>
+                <SelectItem value="Em Orçamento">Em Orçamento</SelectItem>
                 <SelectItem value="Aguardando Aprovação">Aguardando Aprovação</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
-                <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+                <SelectItem value="Em Manutenção">Em Manutenção</SelectItem>
                 <SelectItem value="Aguardando Peça">Aguardando Peça</SelectItem>
+                <SelectItem value="Peça Indisponível">Peça Indisponível</SelectItem>
                 <SelectItem value="Pronto">Pronto</SelectItem>
                 <SelectItem value="Concluído">Concluído</SelectItem>
                 <SelectItem value="Cancelado">Cancelado</SelectItem>

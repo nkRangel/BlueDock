@@ -1,9 +1,4 @@
-
-
 import { Button } from "@/components/ui/button";
-
-
-
 
 interface PaginationControlsProps {
     currentPage: number;
@@ -11,11 +6,7 @@ interface PaginationControlsProps {
     onPageChange: (page: number) => void;
 }
 
-
-
 export function PaginationControls({ currentPage, totalPages, onPageChange }: PaginationControlsProps) {
-    
-    
     if (totalPages <= 1) {
         return null;
     }
@@ -25,8 +16,6 @@ export function PaginationControls({ currentPage, totalPages, onPageChange }: Pa
             <span className="text-sm text-muted-foreground">
                 Página {currentPage} de {totalPages}
             </span>
-            {/* A lógica do 'disabled' é importante para a experiência do usuário,
-                evitando que ele clique em 'Anterior' na primeira página ou 'Próxima' na última. */}
             <Button
                 variant="outline"
                 size="sm"

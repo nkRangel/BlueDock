@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -31,7 +29,6 @@ export function AddServiceDialog({ onServiceAdded }: AddServiceDialogProps) {
   }, [open]);
 
   const handleSubmit = async () => {
-    
     if (!customerName || !itemDescription) {
       toast.error('Nome do cliente e descrição são obrigatórios.');
       return;
@@ -44,7 +41,7 @@ export function AddServiceDialog({ onServiceAdded }: AddServiceDialogProps) {
         customer_email: customerEmail,
         item_description: itemDescription,
         service_details: serviceDetails,
-        price: price ? parseFloat(price) : 0, 
+        price: price ? parseFloat(price) : 0,
         category_id: categoryId ? parseInt(categoryId) : null,
       });
       toast.success('Serviço adicionado!');

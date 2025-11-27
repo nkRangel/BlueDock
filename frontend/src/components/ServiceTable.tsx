@@ -1,5 +1,6 @@
 import { ServiceOrder, deleteService, updateService } from "@/api/services";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EditServiceDialog } from "./EditServiceDialog";
 import { toast } from "sonner";
@@ -12,23 +13,27 @@ interface ServiceTableProps {
   onServiceUpdated: () => void; 
 }
 
+// Definição centralizada dos status disponíveis no fluxo de trabalho
 const STATUS_OPTIONS: ServiceOrder['status'][] = [
-  'Orçamento Enviado', 'Aguardando Aprovação', 'Pendente', 
-  'Em Andamento', 'Aguardando Peça', 'Pronto', 
+  'Em Orçamento', 'Aguardando Aprovação', 'Pendente', 
+  'Em Manutenção', 'Aguardando Peça', 'Peça Indisponível', 'Pronto', 
   'Concluído', 'Cancelado'
 ];
 
+// Mapeamento de cores para feedback visual dos status
 const statusConfig: Record<ServiceOrder['status'], { className: string }> = {
-  'Orçamento Enviado': { className: 'bg-slate-500/20 text-slate-500 border-slate-500/50' },
-  'Aguardando Aprovação': { className: 'bg-orange-500/20 text-orange-500 border-orange-500/50' },
+  'Em Orçamento': { className: 'bg-slate-500/20 text-slate-500 border-slate-500/50' },
+  'Aguardando Aprovação': { className: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50' },
   'Pendente': { className: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/50' },
-  'Em Andamento': { className: 'bg-blue-500/20 text-blue-500 border-blue-500/50' },
+  'Em Manutenção': { className: 'bg-blue-500/20 text-blue-500 border-blue-500/50' },
   'Aguardando Peça': { className: 'bg-purple-500/20 text-purple-500 border-purple-500/50' },
+  'Peça Indisponível': { className: 'bg-rose-500/20 text-rose-500 border-rose-500/50' },
   'Pronto': { className: 'bg-cyan-500/20 text-cyan-500 border-cyan-500/50' },
   'Concluído': { className: 'bg-green-500/20 text-green-500 border-green-500/50' },
   'Cancelado': { className: 'bg-red-500/20 text-red-500 border-red-500/50' },
 };
 
+// Helper para formatação de telefone
 const formatPhone = (phone?: string) => {
   if (!phone) return "-";
   const cleaned = phone.replace(/\D/g, "");
@@ -83,7 +88,7 @@ export function ServiceTable({ services, onServiceDeleted, onServiceUpdated }: S
             <TableHead className="font-bold">Cliente</TableHead>
             <TableHead className="font-bold">Item</TableHead>
             <TableHead className="w-[120px] font-bold">Categoria</TableHead>
-            <TableHead className="w-[180px] font-bold text-center">Status</TableHead>
+            <TableHead className="w-[200px] font-bold text-center">Status</TableHead>
             <TableHead className="w-[120px] text-right font-bold">Preço</TableHead>
             <TableHead className="w-[140px] text-right font-bold">Ações</TableHead>
           </TableRow>
@@ -128,37 +133,11 @@ export function ServiceTable({ services, onServiceDeleted, onServiceUpdated }: S
                 
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handleNotifyWhatsApp(service)} 
-                      className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10"
-                      title="WhatsApp"
-                    >
-                      <FaWhatsapp className="h-4 w-4" />
-                    </Button>
-
+                    <Button variant="ghost" size="icon" onClick={() => handleNotifyWhatsApp(service)} className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10" title="WhatsApp"><FaWhatsapp className="h-4 w-4" /></Button>
                     <div className="inline-block">
-                        <EditServiceDialog 
-                            service={service} 
-                            onServiceUpdated={onServiceUpdated} 
-                            trigger={
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10" title="Editar">
-                                    <FaEdit className="h-4 w-4" />
-                                </Button>
-                            }
-                        />
+                        <EditServiceDialog service={service} onServiceUpdated={onServiceUpdated} trigger={<Button variant="ghost" size="icon" className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10" title="Editar"><FaEdit className="h-4 w-4" /></Button>} />
                     </div>
-
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => handleDelete(service.id)}
-                      className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
-                      title="Excluir"
-                    >
-                      <FaTrash className="h-3.5 w-3.5" />
-                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)} className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10" title="Excluir"><FaTrash className="h-3.5 w-3.5" /></Button>
                   </div>
                 </TableCell>
               </TableRow>
